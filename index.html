@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>대학 고급 실험수업 디지털 강의실 (Virtual Lab & LMS)</title>
+    <title>CHEM 301 • Spectrophotometry Virtual Laboratory</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -12,84 +12,133 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Three.js for 3D chemical structure simulation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- Google Font: Inter & Noto Sans KR -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Space Grotesk, Noto Serif KR, & JetBrains Mono for Taste-Skill aesthetics -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Noto+Sans+KR:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'sans-serif'],
+                        heading: ['"Space Grotesk"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        obsidian: '#090a0f',
+                        slatepanel: '#12151e',
+                        borderpanel: '#1e2433',
+                        electricblue: '#38bdf8',
+                        vividviolet: '#818cf8',
+                        emeraldaccent: '#34d399',
+                        amberaccent: '#fbbf24',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         body {
-            font-family: 'Noto Sans KR', 'Inter', sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
+            background-color: #090a0f;
+            color: #e2e8f0;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.05) 0px, transparent 50%);
+            background-attachment: fixed;
         }
+
         /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #090a0f; }
+        ::-webkit-scrollbar-thumb { background: #1e2433; border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+
+        /* Editorial & Anti-Slop Architectural Surfaces */
+        .editorial-panel {
+            background: #12151e;
+            border: 1px solid #1e2433;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
         }
-        ::-webkit-scrollbar-track {
-            background: #1e293b;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #475569;
-        }
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .glass-card {
-            background: rgba(51, 65, 85, 0.4);
+        .editorial-card {
+            background: rgba(18, 21, 30, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .editorial-card:hover {
+            border-color: rgba(56, 189, 248, 0.3);
+            background: rgba(22, 27, 38, 0.8);
+            transform: translateY(-1px);
+        }
+
+        /* Tab Buttons Taste Style */
+        .nav-btn {
+            position: relative;
             transition: all 0.2s ease;
         }
-        .glass-card:hover {
-            background: rgba(51, 65, 85, 0.7);
-            border-color: rgba(59, 130, 246, 0.4);
+        .nav-btn.active-tab {
+            background-color: rgba(56, 189, 248, 0.08) !important;
+            color: #38bdf8 !important;
+            border-color: rgba(56, 189, 248, 0.4) !important;
         }
-        .tab-btn.active {
-            color: #60a5fa;
-            border-bottom: 2px solid #3b82f6;
-            background-color: rgba(59, 130, 246, 0.1);
+        .nav-btn.active-tab::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 20%;
+            bottom: 20%;
+            width: 3px;
+            background-color: #38bdf8;
+            border-radius: 0 2px 2px 0;
+        }
+
+        .mono-tag {
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: -0.02em;
+        }
+
+        /* Scanline effect for high-tech instrument panels */
+        .scanline-grid {
+            background-size: 30px 30px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
+<body class="min-h-screen flex flex-col antialiased selection:bg-sky-500 selection:text-black">
 
-    <!-- Top Navigation Bar -->
-    <header class="sticky top-0 z-50 glass-panel border-b border-slate-800">
+    <!-- Editorial Top Navigation & Lab Telemetry Bar -->
+    <header class="sticky top-0 z-50 bg-obsidian/90 backdrop-blur-md border-b border-borderpanel">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <!-- Logo & Course Name -->
+                <!-- Course & Spec Title -->
                 <div class="flex items-center space-x-4">
-                    <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white shadow-lg shadow-blue-500/30">
-                        <i class="fa-solid font-bold fa-flask-vial text-xl"></i>
+                    <div class="w-9 h-9 rounded-md bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 font-mono text-sm font-bold">
+                        Ex
                     </div>
                     <div>
-                        <span class="text-xs font-semibold tracking-wider text-blue-400 uppercase">CHEM 301 • 고급실험</span>
-                        <h1 class="text-lg font-bold text-white leading-tight">분광광도법을 이용한 용액의 농도 결정</h1>
+                        <div class="flex items-center space-x-2">
+                            <span class="mono-tag text-[10px] font-medium text-sky-400 uppercase tracking-widest bg-sky-950/60 px-1.5 py-0.5 border border-sky-800/50 rounded">CHEM 301</span>
+                            <span class="text-xs text-slate-500">• Virtual Lab Platform</span>
+                        </div>
+                        <h1 class="font-heading text-base font-semibold text-white tracking-tight leading-none mt-0.5">
+                            분광광도법을 이용한 용액의 농도 결정
+                        </h1>
                     </div>
                 </div>
 
-                <!-- Right Utility Navigation -->
-                <div class="hidden md:flex items-center space-x-6 text-sm">
-                    <div class="flex items-center space-x-2 text-slate-300">
-                        <i class="fa-regular fa-clock text-blue-400"></i>
-                        <span>강의시간: 목요일 13:00 - 17:00</span>
+                <!-- Right Instrumental Telemetry Panel -->
+                <div class="hidden md:flex items-center space-x-6 mono-tag text-xs">
+                    <div class="flex items-center space-x-2 text-slate-400 bg-slatepanel/80 px-3 py-1.5 rounded-md border border-borderpanel">
+                        <span class="inline-block w-2 h-2 rounded-full bg-emeraldaccent animate-pulse"></span>
+                        <span class="text-slate-300">Lab Temp: 22.4°C</span>
+                        <span class="text-slate-600">|</span>
+                        <span class="text-slate-300">RH: 45%</span>
                     </div>
-                    <div class="flex items-center space-x-2 text-slate-300">
-                        <i class="fa-solid fa-location-dot text-emerald-400"></i>
-                        <span>제2과학관 402호실</span>
-                    </div>
-                    <div class="flex items-center space-x-3 border-l border-slate-700 pl-6">
-                        <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-blue-400 border border-slate-600">
-                            김연구
-                        </div>
-                        <div class="text-xs">
-                            <p class="text-slate-200 font-medium">김연구 학부생</p>
-                            <p class="text-slate-400">202412345</p>
+                    <div class="flex items-center space-x-3 border-l border-borderpanel pl-5">
+                        <div class="text-right">
+                            <p class="text-slate-200 font-medium leading-none">김연구 (202412345)</p>
+                            <p class="text-[10px] text-slate-500 mt-1">제2과학관 402호 • 3조</p>
                         </div>
                     </div>
                 </div>
@@ -97,237 +146,231 @@
         </div>
     </header>
 
-    <!-- Main Container -->
+    <!-- Main Container Layout -->
     <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
         <!-- Sidebar Navigation (3 cols) -->
-        <aside class="lg:col-span-3 space-y-6">
-            <!-- Laboratory Progress & Quick Stats -->
-            <div class="glass-panel rounded-2xl p-5 border border-slate-800">
-                <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">실험 진행 현황</h3>
-                <div class="space-y-4">
-                    <div>
-                        <div class="flex justify-between text-xs mb-1">
-                            <span class="text-slate-300 font-medium">전체 진도율</span>
-                            <span class="text-blue-400 font-bold" id="progressPercent">65%</span>
-                        </div>
-                        <div class="w-full bg-slate-800 rounded-full h-2">
-                            <div class="bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-full transition-all duration-500" style="width: 65%" id="progressBar"></div>
-                        </div>
+        <aside class="lg:col-span-3 space-y-5">
+            <!-- Lab Status & Progress Meter -->
+            <div class="editorial-panel rounded-xl p-4 space-y-3">
+                <div class="flex items-center justify-between border-b border-borderpanel pb-2">
+                    <span class="mono-tag text-xs font-semibold text-slate-400 uppercase tracking-wider">Lab Progress</span>
+                    <span class="mono-tag text-xs font-bold text-sky-400" id="progressPercent">65%</span>
+                </div>
+                <div class="w-full bg-slate-900 rounded-full h-1.5 p-0.5 border border-borderpanel">
+                    <div class="bg-sky-400 h-1 rounded-full transition-all duration-500" style="width: 65%" id="progressBar"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-center pt-1">
+                    <div class="bg-obsidian/60 p-2 rounded border border-borderpanel">
+                        <p class="mono-tag text-[10px] text-slate-500 uppercase">Deadline</p>
+                        <p class="mono-tag text-xs font-semibold text-amberaccent mt-0.5">D-2 (18:00)</p>
                     </div>
-                    <div class="grid grid-cols-2 gap-2 text-center pt-2">
-                        <div class="bg-slate-800/60 p-2.5 rounded-xl border border-slate-700/50">
-                            <p class="text-xs text-slate-400">제출 기한</p>
-                            <p class="text-xs font-bold text-amber-400 mt-0.5">D-2일 18:00</p>
-                        </div>
-                        <div class="bg-slate-800/60 p-2.5 rounded-xl border border-slate-700/50">
-                            <p class="text-xs text-slate-400">안전 교육</p>
-                            <p class="text-xs font-bold text-emerald-400 mt-0.5"><i class="fa-solid fa-check mr-1"></i>이수 완료</p>
-                        </div>
+                    <div class="bg-obsidian/60 p-2 rounded border border-borderpanel">
+                        <p class="mono-tag text-[10px] text-slate-500 uppercase">Safety Quiz</p>
+                        <p class="mono-tag text-xs font-semibold text-emeraldaccent mt-0.5">PASSED</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Experiment Module List -->
-            <nav class="glass-panel rounded-2xl p-4 border border-slate-800 space-y-1" id="navContainer">
-                <div class="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">학습 모듈</div>
+            <!-- Experiment Modules -->
+            <nav class="editorial-panel rounded-xl p-2 space-y-1" id="navContainer">
+                <div class="px-3 py-2 mono-tag text-[11px] font-bold text-slate-500 uppercase tracking-wider">Modules</div>
                 
-                <button onclick="switchTab('overview')" class="nav-btn w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-medium transition-colors bg-blue-600/20 text-blue-400 border border-blue-500/30" data-tab="overview">
-                    <div class="flex items-center space-x-3">
-                        <i class="fa-solid fa-book-open text-base"></i>
-                        <span>1. 개요 및 학습 목표</span>
+                <button onclick="switchTab('overview')" class="nav-btn active-tab w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white border border-transparent transition" data-tab="overview">
+                    <div class="flex items-center space-x-2.5">
+                        <span class="mono-tag text-slate-500 text-[11px]">01</span>
+                        <span>개요 및 학습 목표</span>
                     </div>
-                    <i class="fa-solid fa-chevron-right text-xs opacity-60"></i>
+                    <i class="fa-solid fa-arrow-right text-[10px] opacity-40"></i>
                 </button>
 
-                <button onclick="switchTab('principle')" class="nav-btn w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/60 transition-colors" data-tab="principle">
-                    <div class="flex items-center space-x-3">
-                        <i class="fa-solid fa-atom text-base"></i>
-                        <span>2. 실험 이론 & 원리</span>
+                <button onclick="switchTab('principle')" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white border border-transparent transition" data-tab="principle">
+                    <div class="flex items-center space-x-2.5">
+                        <span class="mono-tag text-slate-500 text-[11px]">02</span>
+                        <span>실험 이론 & 3D 원리</span>
                     </div>
-                    <i class="fa-solid fa-chevron-right text-xs opacity-60"></i>
+                    <i class="fa-solid fa-arrow-right text-[10px] opacity-40"></i>
                 </button>
 
-                <button onclick="switchTab('procedure')" class="nav-btn w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/60 transition-colors" data-tab="procedure">
-                    <div class="flex items-center space-x-3">
-                        <i class="fa-solid fa-list-check text-base"></i>
-                        <span>3. 실험 방법 및 절차 (SOP)</span>
+                <button onclick="switchTab('procedure')" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white border border-transparent transition" data-tab="procedure">
+                    <div class="flex items-center space-x-2.5">
+                        <span class="mono-tag text-slate-500 text-[11px]">03</span>
+                        <span>실험 절차 (SOP Checklist)</span>
                     </div>
-                    <i class="fa-solid fa-chevron-right text-xs opacity-60"></i>
+                    <i class="fa-solid fa-arrow-right text-[10px] opacity-40"></i>
                 </button>
 
-                <button onclick="switchTab('safety')" class="nav-btn w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/60 transition-colors" data-tab="safety">
-                    <div class="flex items-center space-x-3">
-                        <i class="fa-solid fa-shield-halved text-base text-amber-400"></i>
-                        <span>4. 시약 MSDS 및 안전가이드</span>
+                <button onclick="switchTab('safety')" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white border border-transparent transition" data-tab="safety">
+                    <div class="flex items-center space-x-2.5">
+                        <span class="mono-tag text-amberaccent text-[11px]">04</span>
+                        <span>안전가이드 & MSDS</span>
                     </div>
-                    <i class="fa-solid fa-chevron-right text-xs opacity-60"></i>
+                    <i class="fa-solid fa-arrow-right text-[10px] opacity-40"></i>
                 </button>
 
-                <button onclick="switchTab('calculator')" class="nav-btn w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/60 transition-colors" data-tab="calculator">
-                    <div class="flex items-center space-x-3">
-                        <i class="fa-solid fa-calculator text-base text-indigo-400"></i>
-                        <span>5. 데이터 분석 & 계산기</span>
+                <button onclick="switchTab('calculator')" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white border border-transparent transition" data-tab="calculator">
+                    <div class="flex items-center space-x-2.5">
+                        <span class="mono-tag text-sky-400 text-[11px]">05</span>
+                        <span>데이터 회귀 분석기</span>
                     </div>
-                    <i class="fa-solid fa-chevron-right text-xs opacity-60"></i>
+                    <i class="fa-solid fa-arrow-right text-[10px] opacity-40"></i>
                 </button>
 
-                <button onclick="switchTab('report')" class="nav-btn w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/60 transition-colors" data-tab="report">
-                    <div class="flex items-center space-x-3">
-                        <i class="fa-solid fa-file-export text-base text-emerald-400"></i>
-                        <span>6. 결과 보고서 제출</span>
+                <button onclick="switchTab('report')" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white border border-transparent transition" data-tab="report">
+                    <div class="flex items-center space-x-2.5">
+                        <span class="mono-tag text-emeraldaccent text-[11px]">06</span>
+                        <span>결과 보고서 제출</span>
                     </div>
-                    <i class="fa-solid fa-chevron-right text-xs opacity-60"></i>
+                    <i class="fa-solid fa-arrow-right text-[10px] opacity-40"></i>
                 </button>
             </nav>
 
-            <!-- Download Resources -->
-            <div class="glass-panel rounded-2xl p-4 border border-slate-800 space-y-3">
-                <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">강의자료 다운로드</h4>
-                <a href="#" onclick="showNotification('강의 노트(PDF)가 다운로드되었습니다.'); return false;" class="flex items-center justify-between p-2.5 rounded-lg bg-slate-800/40 hover:bg-slate-800 border border-slate-700/50 text-xs text-slate-300 transition">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-regular fa-file-pdf text-red-400 text-sm"></i>
-                        <span>실험교재_Lab_Manual_v3.pdf</span>
-                    </div>
-                    <i class="fa-solid fa-download text-slate-400"></i>
+            <!-- Downloadable Resources -->
+            <div class="editorial-panel rounded-xl p-4 space-y-2">
+                <div class="mono-tag text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Lab Materials</div>
+                <a href="#" onclick="showNotification('강의 노트(PDF)가 다운로드되었습니다.'); return false;" class="flex items-center justify-between p-2 rounded bg-obsidian/40 hover:bg-slate-800/80 border border-borderpanel text-xs text-slate-300 transition">
+                    <span class="truncate">Lab_Manual_Spectro_v3.pdf</span>
+                    <i class="fa-solid fa-download text-slate-500 text-xs ml-2"></i>
                 </a>
-                <a href="#" onclick="showNotification('보고서 양식(DOCX)이 다운로드되었습니다.'); return false;" class="flex items-center justify-between p-2.5 rounded-lg bg-slate-800/40 hover:bg-slate-800 border border-slate-700/50 text-xs text-slate-300 transition">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-regular fa-file-word text-blue-400 text-sm"></i>
-                        <span>결과보고서_양식.docx</span>
-                    </div>
-                    <i class="fa-solid fa-download text-slate-400"></i>
+                <a href="#" onclick="showNotification('보고서 양식(DOCX)이 다운로드되었습니다.'); return false;" class="flex items-center justify-between p-2 rounded bg-obsidian/40 hover:bg-slate-800/80 border border-borderpanel text-xs text-slate-300 transition">
+                    <span class="truncate">Report_Template_2026.docx</span>
+                    <i class="fa-solid fa-download text-slate-500 text-xs ml-2"></i>
                 </a>
             </div>
         </aside>
 
-        <!-- Main Content Area (9 cols) -->
+        <!-- Main Content (9 cols) -->
         <main class="lg:col-span-9 space-y-6">
 
             <!-- TAB 1: OVERVIEW -->
             <section id="tab-overview" class="tab-content space-y-6">
-                <!-- Hero Banner -->
-                <div class="relative overflow-hidden rounded-3xl glass-panel p-8 border border-slate-800 bg-gradient-to-r from-slate-900 via-blue-950/40 to-slate-900">
-                    <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <!-- Hero Editorial Banner -->
+                <div class="editorial-panel rounded-xl p-8 relative overflow-hidden scanline-grid border border-borderpanel">
                     <div class="relative z-10 max-w-2xl">
-                        <span class="px-3 py-1 text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full inline-block mb-3">화학 및 물질과학 전공 필수</span>
-                        <h2 class="text-2xl sm:text-3xl font-bold text-white mb-3">Beer-Lambert 법칙을 활용한 자외선-가시광선 분광광도법</h2>
-                        <p class="text-slate-300 text-sm leading-relaxed mb-6">
-                            본 실험에서는 UV-Vis Spectrophotometer를 사용하여 미지 용액(황산구리, CuSO₄)의 흡광도를 측정하고, 검정곡선(Calibration Curve)을 작성하여 미지 시료의 정확한 농도를 정량 분석하는 방법을 습득합니다.
+                        <div class="flex items-center space-x-2 mb-3">
+                            <span class="mono-tag text-[10px] uppercase bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded border border-sky-500/20">Analytical Chemistry</span>
+                            <span class="mono-tag text-[10px] text-slate-500">• Experiment 04</span>
+                        </div>
+                        <h2 class="font-heading text-2xl sm:text-3xl font-bold text-white tracking-tight leading-snug mb-3">
+                            Beer-Lambert 법칙을 활용한<br>자외선-가시광선 분광광도법 정량분석
+                        </h2>
+                        <p class="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6">
+                            본 실험에서는 UV-Vis Spectrophotometer를 운용하여 특정 파장 영역에서 시료 용액의 흡광도를 정확히 측정하고, 농도 gradient 기반 검정곡선(Calibration Curve)을 작성하여 미지 시료의 정확한 몰농도를 산출합니다.
                         </p>
-                        <div class="flex flex-wrap gap-4 text-xs font-medium">
-                            <div class="flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
-                                <i class="fa-solid fa-flask text-blue-400"></i>
-                                <span>주요 시약: CuSO₄·5H₂O</span>
+                        
+                        <div class="grid grid-cols-3 gap-3 pt-2 border-t border-borderpanel">
+                            <div>
+                                <p class="mono-tag text-[10px] text-slate-500 uppercase">Target Specimen</p>
+                                <p class="mono-tag text-xs font-semibold text-slate-200 mt-0.5">CuSO₄·5H₂O</p>
                             </div>
-                            <div class="flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
-                                <i class="fa-solid fa-stopwatch text-indigo-400"></i>
-                                <span>소요 시간: 약 3시간</span>
+                            <div>
+                                <p class="mono-tag text-[10px] text-slate-500 uppercase">Est. Duration</p>
+                                <p class="mono-tag text-xs font-semibold text-slate-200 mt-0.5">3.0 Hours</p>
                             </div>
-                            <div class="flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
-                                <i class="fa-solid fa-triangle-exclamation text-amber-400"></i>
-                                <span>위험도: 보통 (안전유의)</span>
+                            <div>
+                                <p class="mono-tag text-[10px] text-slate-500 uppercase">Hazard Index</p>
+                                <p class="mono-tag text-xs font-semibold text-amberaccent mt-0.5">Moderate (PPE Level 2)</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Learning Objectives -->
+                <!-- Learning Objectives Triad -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="glass-panel p-5 rounded-2xl border border-slate-800">
-                        <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-lg mb-3">
-                            <i class="fa-solid fa-lightbulb"></i>
-                        </div>
-                        <h3 class="font-bold text-white text-base mb-1">1. 분광법 이론 이해</h3>
+                    <div class="editorial-panel p-5 rounded-xl border border-borderpanel">
+                        <span class="mono-tag text-xs font-bold text-sky-400 block mb-2">01 / CONCEPT</span>
+                        <h3 class="font-heading text-sm font-bold text-white mb-1.5">분광학 원리 고찰</h3>
                         <p class="text-slate-400 text-xs leading-relaxed">
-                            빛의 흡수 및 투과 원리와 Beer-Lambert 법칙($A = \epsilon b c$)의 물리적 의미를 완벽히 이해합니다.
+                            광자의 흡수 및 투과 현상, 그리고 Beer-Lambert 법칙($A = \epsilon b c$)이 성립하는 물리화학적 조건과 한계성을 파악합니다.
                         </p>
                     </div>
 
-                    <div class="glass-panel p-5 rounded-2xl border border-slate-800">
-                        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-lg mb-3">
-                            <i class="fa-solid fa-gears"></i>
-                        </div>
-                        <h3 class="font-bold text-white text-base mb-1">2. 기기 조작 숙달</h3>
+                    <div class="editorial-panel p-5 rounded-xl border border-borderpanel">
+                        <span class="mono-tag text-xs font-bold text-vividviolet block mb-2">02 / INSTRUMENT</span>
+                        <h3 class="font-heading text-sm font-bold text-white mb-1.5">기기 조작 정석</h3>
                         <p class="text-slate-400 text-xs leading-relaxed">
-                            분광광도계(Spectrophotometer) 및 큐벳(Cuvette) 사용법, Blank 측정(Zeroing) 절차를 정석대로 실습합니다.
+                            분광광도계 셀 홀더 세팅, Quartz Cuvette의 올바른 세척 및 핸들링 방법, 영점 보정(Blanking) 절차를 숙지합니다.
                         </p>
                     </div>
 
-                    <div class="glass-panel p-5 rounded-2xl border border-slate-800">
-                        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-lg mb-3">
-                            <i class="fa-solid fa-chart-line"></i>
-                        </div>
-                        <h3 class="font-bold text-white text-base mb-1">3. 데이터 회귀분석</h3>
+                    <div class="editorial-panel p-5 rounded-xl border border-borderpanel">
+                        <span class="mono-tag text-xs font-bold text-emeraldaccent block mb-2">03 / QUANTITATION</span>
+                        <h3 class="font-heading text-sm font-bold text-white mb-1.5">선형 회귀 연산</h3>
                         <p class="text-slate-400 text-xs leading-relaxed">
-                            선형 회귀 연산을 통해 선형 결정계수($R^2$) 및 미지 시료의 몰농도를 정밀하게 도출합니다.
+                            최소제곱법을 적용한 표준 곡선 피팅, 결정계수($R^2$) 도출 및 오차 범위 내 미지 농도의 수학적 추론을 실습합니다.
                         </p>
                     </div>
                 </div>
 
-                <!-- Pre-lab Video & Interactive Preview -->
-                <div class="glass-panel rounded-2xl p-6 border border-slate-800">
-                    <h3 class="text-lg font-bold text-white mb-4 flex items-center space-x-2">
-                        <i class="fa-solid fa-circle-play text-red-500"></i>
-                        <span>실험 사전 시청 영상 (Pre-Lab Lecture)</span>
-                    </h3>
-                    <div class="relative aspect-video rounded-xl overflow-hidden bg-slate-950 flex items-center justify-center border border-slate-800 group">
-                        <!-- Simulated Video Player -->
-                        <div class="absolute inset-0 bg-cover bg-center opacity-40 group-hover:scale-105 transition-transform duration-500" style="background-image: url('https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=1200&q=80')"></div>
-                        <div class="relative z-10 text-center">
-                            <button onclick="showNotification('가상 시뮬레이션 및 영상이 재생됩니다.');" class="w-16 h-16 rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl shadow-xl shadow-blue-500/50 group-hover:scale-110 transition-transform">
-                                <i class="fa-solid fa-play ml-1"></i>
-                            </button>
-                            <p class="text-sm font-medium text-white mt-3 shadow-sm">강의: 분광광도계 올바른 사용법 및 큐벳 취급 주의사항 (12분)</p>
-                        </div>
+                <!-- Pre-lab Video Frame -->
+                <div class="editorial-panel p-5 rounded-xl space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-heading text-sm font-bold text-white flex items-center space-x-2">
+                            <i class="fa-solid fa-play-circle text-sky-400"></i>
+                            <span>Pre-Lab Demonstration Video</span>
+                        </h3>
+                        <span class="mono-tag text-[10px] text-slate-500">12 min • 1080p</span>
+                    </div>
+                    <div class="relative aspect-video rounded-lg overflow-hidden bg-obsidian border border-borderpanel flex items-center justify-center group">
+                        <div class="absolute inset-0 bg-cover bg-center opacity-30 group-hover:scale-105 transition-transform duration-500" style="background-image: url('https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=1200&q=80')"></div>
+                        <button onclick="showNotification('시뮬레이션 시청이 시작됩니다.');" class="relative z-10 w-14 h-14 rounded-full bg-sky-500 text-black flex items-center justify-center text-xl shadow-lg hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-play ml-1"></i>
+                        </button>
                     </div>
                 </div>
             </section>
 
-            <!-- TAB 2: PRINCIPLE & THEORY -->
+            <!-- TAB 2: PRINCIPLE & 3D -->
             <section id="tab-principle" class="tab-content hidden space-y-6">
-                <div class="glass-panel p-6 rounded-2xl border border-slate-800">
-                    <h2 class="text-xl font-bold text-white mb-4 border-b border-slate-800 pb-3 flex items-center">
-                        <i class="fa-solid fa-atom text-blue-400 mr-2"></i> Beer-Lambert 법칙 및 분광학 원리
+                <div class="editorial-panel p-6 rounded-xl space-y-4">
+                    <h2 class="font-heading text-lg font-bold text-white border-b border-borderpanel pb-3 flex items-center justify-between">
+                        <span>Beer-Lambert Law Mechanics</span>
+                        <span class="mono-tag text-xs font-normal text-sky-400">A = ε • b • c</span>
                     </h2>
                     
-                    <div class="prose prose-invert max-w-none text-slate-300 text-sm space-y-4">
+                    <div class="text-slate-300 text-xs leading-relaxed space-y-3">
                         <p>
-                            빛이 용액을 통과할 때, 빛의 일부는 흡수되고 일부는 투과됩니다. 입사광의 세기를 $I_0$, 투과광의 세기를 $I$라 할 때, <strong>투광도(Transmittance, $T$)</strong>는 다음과 같이 정의됩니다.
+                            단색광이 단면적 $A$, 두께 $b$인 균일한 매질을 통과할 때, 빛의 흡수율은 매질 내 흡수 입자의 농도($c$)와 광로 길이($b$)에 비례합니다.
                         </p>
-                        <div class="bg-slate-900/80 p-4 rounded-xl font-mono text-center text-blue-300 border border-slate-800 text-base">
-                            T = \frac{I}{I_0} \quad \left(\text{투과율 } \%T = \frac{I}{I_0} \times 100\right)
+                        <div class="bg-obsidian p-4 rounded-lg font-mono text-center text-sky-300 border border-borderpanel text-xs space-y-1">
+                            <div>T = I / I₀  (Transmittance)</div>
+                            <div class="text-emeraldaccent font-bold mt-1">A = -log₁₀(T) = ε • b • c</div>
                         </div>
-                        <p>
-                            <strong>흡광도(Absorbance, $A$)</strong>는 투광도의 음의 대수(log) 값으로 나타내며, 용액의 농도($c$) 및 용과 경로 길이($b$)에 직결됩니다:
-                        </p>
-                        <div class="bg-slate-900/80 p-4 rounded-xl font-mono text-center text-emerald-300 border border-slate-800 text-base">
-                            A = -\log_{10}(T) = \epsilon \cdot b \cdot c
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 text-[11px] mono-tag">
+                            <div class="bg-slatepanel p-2 rounded border border-borderpanel">
+                                <span class="text-slate-500 block">A</span>
+                                <span class="text-slate-200">Absorbance (Unitless)</span>
+                            </div>
+                            <div class="bg-slatepanel p-2 rounded border border-borderpanel">
+                                <span class="text-slate-500 block">ε</span>
+                                <span class="text-slate-200">Molar Absorptivity</span>
+                            </div>
+                            <div class="bg-slatepanel p-2 rounded border border-borderpanel">
+                                <span class="text-slate-500 block">b</span>
+                                <span class="text-slate-200">Path Length (1.0 cm)</span>
+                            </div>
+                            <div class="bg-slatepanel p-2 rounded border border-borderpanel">
+                                <span class="text-slate-500 block">c</span>
+                                <span class="text-slate-200">Molar Conc (mol/L)</span>
+                            </div>
                         </div>
-                        <ul class="list-disc pl-5 space-y-1 text-slate-400 text-xs">
-                            <li><strong class="text-slate-200">A (Absorbance):</strong> 흡광도 (단위 없음)</li>
-                            <li><strong class="text-slate-200">\epsilon (Molar Absorptivity):</strong> 몰흡광계수 ($\text{L}\cdot\text{mol}^{-1}\cdot\text{cm}^{-1}$)</li>
-                            <li><strong class="text-slate-200">b (Path Length):</strong> 빛이 통과하는 시료의 셀 길이 ($\text{cm}$, 보통 1.0 cm 규격)</li>
-                            <li><strong class="text-slate-200">c (Concentration):</strong> 흡수 물질의 몰농도 ($\text{M}$ 또는 $\text{mol/L}$)</li>
-                        </ul>
                     </div>
                 </div>
 
-                <!-- Interactive 3D Molecular / Optics Simulation Preview -->
-                <div class="glass-panel p-6 rounded-2xl border border-slate-800">
-                    <div class="flex items-center justify-between mb-4">
+                <!-- Interactive 3D Canvas Box -->
+                <div class="editorial-panel p-6 rounded-xl space-y-3">
+                    <div class="flex items-center justify-between">
                         <div>
-                            <h3 class="text-lg font-bold text-white">3D 분자 구조 및 흡광 시뮬레이션</h3>
-                            <p class="text-xs text-slate-400">Cu²⁺ 사수화물 Complex 구조 인터랙티브 시각화</p>
+                            <h3 class="font-heading text-sm font-bold text-white">3D Coordination Complex Viewer</h3>
+                            <p class="text-[11px] text-slate-500">[Cu(H₂O)₄]²⁺ Aquo Complex Ligand Structure</p>
                         </div>
-                        <span class="text-xs font-mono bg-blue-500/20 text-blue-300 px-2.5 py-1 rounded-full border border-blue-500/30">WebGL / Three.js</span>
+                        <span class="mono-tag text-[10px] bg-slatepanel text-slate-400 px-2 py-1 rounded border border-borderpanel">WebGL Interactive</span>
                     </div>
 
-                    <!-- Canvas Box -->
-                    <div class="relative w-full h-80 rounded-xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center">
+                    <div class="relative w-full h-80 rounded-lg overflow-hidden bg-obsidian border border-borderpanel">
                         <canvas id="threeCanvas" class="w-full h-full cursor-grab active:cursor-grabbing"></canvas>
-                        <div class="absolute bottom-3 left-3 bg-slate-900/80 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800 text-[11px] text-slate-400 pointer-events-none">
-                            <i class="fa-solid fa-arrows-rotate mr-1"></i> 마우스 드래그로 회전 가능
+                        <div class="absolute bottom-3 left-3 bg-obsidian/80 backdrop-blur px-2.5 py-1 rounded border border-borderpanel mono-tag text-[10px] text-slate-400">
+                            <i class="fa-solid fa-arrows-rotate mr-1"></i> Drag to rotate geometry
                         </div>
                     </div>
                 </div>
@@ -335,77 +378,74 @@
 
             <!-- TAB 3: PROCEDURE (SOP) -->
             <section id="tab-procedure" class="tab-content hidden space-y-6">
-                <div class="glass-panel p-6 rounded-2xl border border-slate-800">
-                    <div class="flex items-center justify-between mb-6">
+                <div class="editorial-panel p-6 rounded-xl space-y-5">
+                    <div class="flex items-center justify-between border-b border-borderpanel pb-4">
                         <div>
-                            <h2 class="text-xl font-bold text-white flex items-center">
-                                <i class="fa-solid fa-list-check text-indigo-400 mr-2"></i> 표준 작업 절차서 (SOP)
-                            </h2>
-                            <p class="text-xs text-slate-400 mt-1">단계별 실험 진행 상황을 체크하며 실험을 완료하세요.</p>
+                            <h2 class="font-heading text-lg font-bold text-white">Standard Operating Procedure (SOP)</h2>
+                            <p class="text-xs text-slate-400 mt-0.5">실험 단계를 명확히 이행하고 체크를 완료하세요.</p>
                         </div>
-                        <button onclick="resetSOP()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 transition">
-                            <i class="fa-solid fa-rotate-right mr-1"></i> 초기화
+                        <button onclick="resetSOP()" class="mono-tag text-xs bg-slatepanel hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded border border-borderpanel transition">
+                            Reset SOP
                         </button>
                     </div>
 
-                    <!-- Steps List -->
-                    <div class="space-y-4" id="sopContainer">
+                    <div class="space-y-3" id="sopContainer">
                         <!-- Step 1 -->
-                        <div class="glass-card p-4 rounded-xl border border-slate-700/60 flex items-start space-x-4">
-                            <input type="checkbox" onchange="updateProgress()" class="sop-checkbox mt-1 w-5 h-5 rounded border-slate-700 bg-slate-900 text-blue-600 focus:ring-blue-500 focus:ring-offset-slate-900 cursor-pointer">
+                        <div class="editorial-card p-4 rounded-lg flex items-start space-x-3.5">
+                            <input type="checkbox" onchange="updateProgress()" class="sop-checkbox mt-0.5 w-4 h-4 rounded border-borderpanel bg-obsidian text-sky-500 focus:ring-0 cursor-pointer">
                             <div class="flex-1">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-xs font-semibold text-blue-400">STEP 1</span>
-                                    <span class="text-[11px] text-slate-400 bg-slate-800 px-2 py-0.5 rounded">준비과정</span>
+                                    <span class="mono-tag text-xs font-bold text-sky-400">STEP 01</span>
+                                    <span class="mono-tag text-[10px] text-slate-500">Stock Solution</span>
                                 </div>
-                                <h4 class="font-bold text-white text-sm mt-0.5">표준 용액(CuSO₄) 제조</h4>
-                                <p class="text-xs text-slate-300 mt-1 leading-relaxed">
-                                    황산구리 오수화물($\text{CuSO}_4\cdot 5\text{H}_2\text{O}$) 약 2.5g을 정밀 저울로 칭량하여 100 mL 부피플라스크에 넣고 증류수로 표시선까지 정용하여 0.1M 표준 용액을 제조합니다.
+                                <h4 class="font-heading text-xs font-bold text-white mt-1">0.1M CuSO₄ 모용액 제조</h4>
+                                <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+                                    황산구리 오수화물($\text{CuSO}_4\cdot 5\text{H}_2\text{O}$) 약 2.497g을 정밀 천칭으로 오차 ±0.001g 내로 측정하여 100mL 부피플라스크에 용해시킵니다.
                                 </p>
                             </div>
                         </div>
 
                         <!-- Step 2 -->
-                        <div class="glass-card p-4 rounded-xl border border-slate-700/60 flex items-start space-x-4">
-                            <input type="checkbox" onchange="updateProgress()" class="sop-checkbox mt-1 w-5 h-5 rounded border-slate-700 bg-slate-900 text-blue-600 focus:ring-blue-500 focus:ring-offset-slate-900 cursor-pointer">
+                        <div class="editorial-card p-4 rounded-lg flex items-start space-x-3.5">
+                            <input type="checkbox" onchange="updateProgress()" class="sop-checkbox mt-0.5 w-4 h-4 rounded border-borderpanel bg-obsidian text-sky-500 focus:ring-0 cursor-pointer">
                             <div class="flex-1">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-xs font-semibold text-blue-400">STEP 2</span>
-                                    <span class="text-[11px] text-slate-400 bg-slate-800 px-2 py-0.5 rounded">묽힘 작업</span>
+                                    <span class="mono-tag text-xs font-bold text-sky-400">STEP 02</span>
+                                    <span class="mono-tag text-[10px] text-slate-500">Serial Dilution</span>
                                 </div>
-                                <h4 class="font-bold text-white text-sm mt-0.5">단계별 희석 (Serial Dilution)</h4>
-                                <p class="text-xs text-slate-300 mt-1 leading-relaxed">
-                                    피펫을 이용해 0.1M 모용액을 각각 2, 4, 6, 8, 10 mL 취하여 50 mL 부피플라스크에 옮긴 뒤 증류수로 채워 0.004M, 0.008M, 0.012M, 0.016M, 0.020M 표준 용액 세트를 만듭니다.
+                                <h4 class="font-heading text-xs font-bold text-white mt-1">표준 시료 세트 5종 준비</h4>
+                                <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+                                    피펫 피펫터를 사용하여 모용액을 분주, 0.004M, 0.008M, 0.012M, 0.016M, 0.020M 표준 용액 세트를 각각 제조합니다.
                                 </p>
                             </div>
                         </div>
 
                         <!-- Step 3 -->
-                        <div class="glass-card p-4 rounded-xl border border-slate-700/60 flex items-start space-x-4">
-                            <input type="checkbox" onchange="updateProgress()" class="sop-checkbox mt-1 w-5 h-5 rounded border-slate-700 bg-slate-900 text-blue-600 focus:ring-blue-500 focus:ring-offset-slate-900 cursor-pointer">
+                        <div class="editorial-card p-4 rounded-lg flex items-start space-x-3.5">
+                            <input type="checkbox" onchange="updateProgress()" class="sop-checkbox mt-0.5 w-4 h-4 rounded border-borderpanel bg-obsidian text-sky-500 focus:ring-0 cursor-pointer">
                             <div class="flex-1">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-xs font-semibold text-blue-400">STEP 3</span>
-                                    <span class="text-[11px] text-slate-400 bg-slate-800 px-2 py-0.5 rounded">기기 영점</span>
+                                    <span class="mono-tag text-xs font-bold text-sky-400">STEP 03</span>
+                                    <span class="mono-tag text-[10px] text-slate-500">Zero Baseline</span>
                                 </div>
-                                <h4 class="font-bold text-white text-sm mt-0.5">최대 흡수 파장($\lambda_{\max}$) 스캔 & Blank 측정</h4>
-                                <p class="text-xs text-slate-300 mt-1 leading-relaxed">
-                                    석영/석영 플라스틱 큐벳에 증류수(Blank)를 채우고 분광광도계에 넣은 뒤 600 nm ~ 800 nm 영역을 스캔하여 Zeroing을 수행합니다. (Cu²⁺ 최대 흡수파장: 약 630 nm)
+                                <h4 class="font-heading text-xs font-bold text-white mt-1">Blank (초순수) 측정 및 Zeroing</h4>
+                                <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+                                    큐벳 투명면에 지문이나 용매가 묻지 않도록 렌즈 페이퍼로 닦은 후 Blank 측정으로 기기 영점을 조율합니다. ($\lambda = 630\text{ nm}$)
                                 </p>
                             </div>
                         </div>
 
                         <!-- Step 4 -->
-                        <div class="glass-card p-4 rounded-xl border border-slate-700/60 flex items-start space-x-4">
-                            <input type="checkbox" onchange="updateProgress()" class="sop-checkbox mt-1 w-5 h-5 rounded border-slate-700 bg-slate-900 text-blue-600 focus:ring-blue-500 focus:ring-offset-slate-900 cursor-pointer">
+                        <div class="editorial-card p-4 rounded-lg flex items-start space-x-3.5">
+                            <input type="checkbox" onchange="updateProgress()" class="sop-checkbox mt-0.5 w-4 h-4 rounded border-borderpanel bg-obsidian text-sky-500 focus:ring-0 cursor-pointer">
                             <div class="flex-1">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-xs font-semibold text-blue-400">STEP 4</span>
-                                    <span class="text-[11px] text-slate-400 bg-slate-800 px-2 py-0.5 rounded">측정 및 데이터</span>
+                                    <span class="mono-tag text-xs font-bold text-sky-400">STEP 04</span>
+                                    <span class="mono-tag text-[10px] text-slate-500">Measurement</span>
                                 </div>
-                                <h4 class="font-bold text-white text-sm mt-0.5">흡광도 데이터 수집 및 미지 시료 측정</h4>
-                                <p class="text-xs text-slate-300 mt-1 leading-relaxed">
-                                    준비한 농도별 표준 용액 5종과 미지 시료(Unknown Sample X)의 흡광도를 $630\text{ nm}$ 파장에서 각각 3회씩 측정하여 평균값을 기록합니다.
+                                <h4 class="font-heading text-xs font-bold text-white mt-1">흡광도 스펙트럼 데이터 수집 및 기록</h4>
+                                <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+                                    표준시료 5종 및 미지 시료 X의 흡광도를 각각 3회씩 반복 측정하여 평균 Absorbance 값을 산출합니다.
                                 </p>
                             </div>
                         </div>
@@ -413,64 +453,51 @@
                 </div>
             </section>
 
-            <!-- TAB 4: SAFETY & MSDS -->
+            <!-- TAB 4: SAFETY -->
             <section id="tab-safety" class="tab-content hidden space-y-6">
-                <div class="glass-panel p-6 rounded-2xl border border-slate-800">
-                    <h2 class="text-xl font-bold text-white mb-4 border-b border-slate-800 pb-3 flex items-center text-amber-400">
-                        <i class="fa-solid fa-triangle-exclamation mr-2"></i> 안전 수칙 및 물질안전보건자료 (MSDS)
+                <div class="editorial-panel p-6 rounded-xl space-y-5">
+                    <h2 class="font-heading text-lg font-bold text-amberaccent border-b border-borderpanel pb-3 flex items-center space-x-2">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span>Chemical Safety & MSDS Standards</span>
                     </h2>
 
-                    <!-- Warning Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                        <div class="bg-amber-950/30 border border-amber-500/30 p-4 rounded-xl flex items-start space-x-3">
-                            <i class="fa-solid fa-biohazard text-amber-400 text-xl mt-1"></i>
-                            <div>
-                                <h4 class="font-bold text-amber-200 text-sm">필수 개인보호구 (PPE) 착용</h4>
-                                <p class="text-xs text-amber-300/80 mt-1">실험실 내에서는 실험복, 보안경, 니트릴 장갑을 항시 착용해야 합니다. 슬리퍼 및 반바지 착용 절대 불가.</p>
-                            </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-amber-950/20 border border-amber-500/20 p-4 rounded-lg">
+                            <h4 class="mono-tag text-xs font-bold text-amber-300 uppercase">Personal Protective Equipment</h4>
+                            <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                                실험실 기본 PPE(보안경, 실험복, 니트릴 장갑)를 필히 착용하세요. 피부 접촉 시 대량의 흐르는 물로 세척해야 합니다.
+                            </p>
                         </div>
-
-                        <div class="bg-red-950/30 border border-red-500/30 p-4 rounded-xl flex items-start space-x-3">
-                            <i class="fa-solid fa-skull-crossbones text-red-400 text-xl mt-1"></i>
-                            <div>
-                                <h4 class="font-bold text-red-200 text-sm">폐액 처리 규정</h4>
-                                <p class="text-xs text-red-300/80 mt-1">구리 이온($\text{Cu}^{2+}$)을 포함한 수용액은 싱크대에 버리지 말고 **'중금속 구리계 폐액통'**에 반드시 분리 수거합니다.</p>
-                            </div>
+                        <div class="bg-red-950/20 border border-red-500/20 p-4 rounded-lg">
+                            <h4 class="mono-tag text-xs font-bold text-red-300 uppercase">Hazardous Waste Protocol</h4>
+                            <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                                구리 이온은 수생 생물에 유해하므로 일반 하수구 배출이 금지되며, 반드시 **중금속 무기폐액통**에 수거하세요.
+                            </p>
                         </div>
                     </div>
 
-                    <!-- Chemical Details Table -->
-                    <h3 class="text-sm font-bold text-white mb-3">주요 취급 시약 상세 정보</h3>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs border-collapse">
+                    <div class="overflow-x-auto border border-borderpanel rounded-lg">
+                        <table class="w-full text-left text-xs">
                             <thead>
-                                <tr class="bg-slate-800/80 text-slate-300 border-b border-slate-700">
-                                    <th class="p-3 font-semibold">시약명</th>
-                                    <th class="p-3 font-semibold">화학식</th>
-                                    <th class="p-3 font-semibold">CAS No.</th>
-                                    <th class="p-3 font-semibold">GHS 유해성 구분</th>
-                                    <th class="p-3 font-semibold">응급 조치</th>
+                                <tr class="bg-slatepanel text-slate-400 mono-tag">
+                                    <th class="p-3">Compound</th>
+                                    <th class="p-3">Formula</th>
+                                    <th class="p-3">CAS No.</th>
+                                    <th class="p-3">GHS Hazard Code</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-800 text-slate-300">
-                                <tr class="hover:bg-slate-800/30">
-                                    <td class="p-3 font-bold text-white">황산구리(II) 수화물</td>
-                                    <td class="p-3 font-mono">CuSO₄·5H₂O</td>
-                                    <td class="p-3 font-mono">7758-99-8</td>
-                                    <td class="p-3">
-                                        <span class="bg-red-500/20 text-red-300 px-2 py-0.5 rounded border border-red-500/30 inline-block mb-1">급성 독성</span>
-                                        <span class="bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded border border-amber-500/30 inline-block">수생 환경 유해</span>
-                                    </td>
-                                    <td class="p-3 text-slate-400">피부 접촉 시 흐르는 물에 15분 이상 세척</td>
+                            <tbody class="divide-y divide-borderpanel text-slate-300 mono-tag">
+                                <tr>
+                                    <td class="p-3 font-bold text-white">Copper(II) Sulfate Pentahydrate</td>
+                                    <td class="p-3 text-sky-400">CuSO₄·5H₂O</td>
+                                    <td class="p-3 text-slate-500">7758-99-8</td>
+                                    <td class="p-3"><span class="bg-red-500/10 text-red-400 px-2 py-0.5 rounded border border-red-500/20">H302 / H410</span></td>
                                 </tr>
-                                <tr class="hover:bg-slate-800/30">
-                                    <td class="p-3 font-bold text-white">초산 (Dilute Acetic Acid)</td>
-                                    <td class="p-3 font-mono">CH₃COOH</td>
-                                    <td class="p-3 font-mono">64-19-7</td>
-                                    <td class="p-3">
-                                        <span class="bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded border border-amber-500/30 inline-block">피부 부식성</span>
-                                    </td>
-                                    <td class="p-3 text-slate-400">증기 흡입 시 즉시 환기되는 장소로 이동</td>
+                                <tr>
+                                    <td class="p-3 font-bold text-white">Acetic Acid (Dilute)</td>
+                                    <td class="p-3 text-sky-400">CH₃COOH</td>
+                                    <td class="p-3 text-slate-500">64-19-7</td>
+                                    <td class="p-3"><span class="bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded border border-amber-500/20">H314</span></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -478,96 +505,93 @@
                 </div>
             </section>
 
-            <!-- TAB 5: CALCULATOR & DATA ANALYSIS -->
+            <!-- TAB 5: CALCULATOR & ANALYSIS -->
             <section id="tab-calculator" class="tab-content hidden space-y-6">
-                <div class="glass-panel p-6 rounded-2xl border border-slate-800">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-800 mb-6 gap-4">
+                <div class="editorial-panel p-6 rounded-xl space-y-6">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-borderpanel pb-4 gap-4">
                         <div>
-                            <h2 class="text-xl font-bold text-white flex items-center">
-                                <i class="fa-solid fa-calculator text-indigo-400 mr-2"></i> 데이터 분석 & 검정곡선(Calibration Curve) 계산기
-                            </h2>
-                            <p class="text-xs text-slate-400 mt-1">측정한 흡광도 데이터를 입력하여 표준 곡선을 작성하고 미지 농도를 구합니다.</p>
+                            <h2 class="font-heading text-lg font-bold text-white">Linear Regression Engine</h2>
+                            <p class="text-xs text-slate-400 mt-0.5">표준 시료 데이터를 기반으로 최적 회귀선 및 미지 시료 농도를 계산합니다.</p>
                         </div>
-                        <button onclick="calculateLinearRegression()" class="bg-blue-600 hover:bg-blue-500 text-white font-medium px-4 py-2 rounded-xl text-xs flex items-center justify-center space-x-2 shadow-lg shadow-blue-600/30 transition">
-                            <i class="fa-solid fa-chart-line"></i>
-                            <span>회귀 분석 및 그래프 업데이트</span>
+                        <button onclick="calculateLinearRegression()" class="mono-tag text-xs bg-sky-500 hover:bg-sky-400 text-black font-bold px-4 py-2 rounded transition flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-calculator"></i>
+                            <span>Compute Regression</span>
                         </button>
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                        <!-- Table Input (5 cols) -->
+                        <!-- Data Input Panel (5 cols) -->
                         <div class="lg:col-span-5 space-y-4">
-                            <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">표준 용액 측정 데이터 입력</h3>
+                            <span class="mono-tag text-xs font-bold text-slate-400 uppercase tracking-wider block">Standard Data Entry</span>
                             
-                            <div class="overflow-x-auto">
+                            <div class="border border-borderpanel rounded-lg overflow-hidden">
                                 <table class="w-full text-left text-xs">
                                     <thead>
-                                        <tr class="bg-slate-800/80 text-slate-300">
-                                            <th class="p-2.5 rounded-l-lg">시료 No.</th>
-                                            <th class="p-2.5">농도 (M)</th>
-                                            <th class="p-2.5 rounded-r-lg">흡광도 (Abs)</th>
+                                        <tr class="bg-slatepanel text-slate-400 mono-tag border-b border-borderpanel">
+                                            <th class="p-2.5">Sample</th>
+                                            <th class="p-2.5">Conc (M)</th>
+                                            <th class="p-2.5">Abs (A)</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-slate-800" id="calcTableBody">
+                                    <tbody class="divide-y divide-borderpanel mono-tag">
                                         <tr>
-                                            <td class="p-2 text-slate-400 font-medium">Standard 1</td>
-                                            <td class="p-2"><input type="number" step="0.001" value="0.004" class="conc-input w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-slate-200 text-xs"></td>
-                                            <td class="p-2"><input type="number" step="0.001" value="0.142" class="abs-input w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-slate-200 text-xs"></td>
+                                            <td class="p-2 text-slate-500">STD 01</td>
+                                            <td class="p-2"><input type="number" step="0.001" value="0.004" class="conc-input w-full bg-obsidian border border-borderpanel rounded p-1 text-slate-200 text-xs"></td>
+                                            <td class="p-2"><input type="number" step="0.001" value="0.142" class="abs-input w-full bg-obsidian border border-borderpanel rounded p-1 text-slate-200 text-xs"></td>
                                         </tr>
                                         <tr>
-                                            <td class="p-2 text-slate-400 font-medium">Standard 2</td>
-                                            <td class="p-2"><input type="number" step="0.001" value="0.008" class="conc-input w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-slate-200 text-xs"></td>
-                                            <td class="p-2"><input type="number" step="0.001" value="0.285" class="abs-input w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-slate-200 text-xs"></td>
+                                            <td class="p-2 text-slate-500">STD 02</td>
+                                            <td class="p-2"><input type="number" step="0.001" value="0.008" class="conc-input w-full bg-obsidian border border-borderpanel rounded p-1 text-slate-200 text-xs"></td>
+                                            <td class="p-2"><input type="number" step="0.001" value="0.285" class="abs-input w-full bg-obsidian border border-borderpanel rounded p-1 text-slate-200 text-xs"></td>
                                         </tr>
                                         <tr>
-                                            <td class="p-2 text-slate-400 font-medium">Standard 3</td>
-                                            <td class="p-2"><input type="number" step="0.001" value="0.012" class="conc-input w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-slate-200 text-xs"></td>
-                                            <td class="p-2"><input type="number" step="0.001" value="0.421" class="abs-input w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-slate-200 text-xs"></td>
+                                            <td class="p-2 text-slate-500">STD 03</td>
+                                            <td class="p-2"><input type="number" step="0.001" value="0.012" class="conc-input w-full bg-obsidian border border-borderpanel rounded p-1 text-slate-200 text-xs"></td>
+                                            <td class="p-2"><input type="number" step="0.001" value="0.421" class="abs-input w-full bg-obsidian border border-borderpanel rounded p-1 text-slate-200 text-xs"></td>
                                         </tr>
                                         <tr>
-                                            <td class="p-2 text-slate-400 font-medium">Standard 4</td>
-                                            <td class="p-2"><input type="number" step="0.001" value="0.016" class="conc-input w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-slate-200 text-xs"></td>
-                                            <td class="p-2"><input type="number" step="0.001" value="0.570" class="abs-input w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-slate-200 text-xs"></td>
+                                            <td class="p-2 text-slate-500">STD 04</td>
+                                            <td class="p-2"><input type="number" step="0.001" value="0.016" class="conc-input w-full bg-obsidian border border-borderpanel rounded p-1 text-slate-200 text-xs"></td>
+                                            <td class="p-2"><input type="number" step="0.001" value="0.570" class="abs-input w-full bg-obsidian border border-borderpanel rounded p-1 text-slate-200 text-xs"></td>
                                         </tr>
                                         <tr>
-                                            <td class="p-2 text-slate-400 font-medium">Standard 5</td>
-                                            <td class="p-2"><input type="number" step="0.001" value="0.020" class="conc-input w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-slate-200 text-xs"></td>
-                                            <td class="p-2"><input type="number" step="0.001" value="0.712" class="abs-input w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-slate-200 text-xs"></td>
+                                            <td class="p-2 text-slate-500">STD 05</td>
+                                            <td class="p-2"><input type="number" step="0.001" value="0.020" class="conc-input w-full bg-obsidian border border-borderpanel rounded p-1 text-slate-200 text-xs"></td>
+                                            <td class="p-2"><input type="number" step="0.001" value="0.712" class="abs-input w-full bg-obsidian border border-borderpanel rounded p-1 text-slate-200 text-xs"></td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
 
-                            <!-- Unknown Sample Input -->
-                            <div class="bg-indigo-950/30 border border-indigo-500/30 p-3.5 rounded-xl space-y-2">
-                                <span class="text-xs font-bold text-indigo-300">미지 시료 (Unknown X) 흡광도 입력</span>
-                                <div class="flex items-center space-x-2">
-                                    <input type="number" id="unknownAbsInput" step="0.001" value="0.355" class="bg-slate-900 border border-slate-700 rounded p-2 text-white text-xs w-full focus:ring-1 focus:ring-indigo-500">
-                                    <button onclick="calculateLinearRegression()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded text-xs font-medium whitespace-nowrap">계산</button>
+                            <!-- Unknown Sample Entry -->
+                            <div class="bg-slatepanel/50 border border-borderpanel p-3 rounded-lg space-y-2">
+                                <span class="mono-tag text-xs font-bold text-amberaccent uppercase block">Unknown Sample X (Abs)</span>
+                                <div class="flex space-x-2">
+                                    <input type="number" id="unknownAbsInput" step="0.001" value="0.355" class="bg-obsidian border border-borderpanel rounded p-2 text-white mono-tag text-xs w-full">
+                                    <button onclick="calculateLinearRegression()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded text-xs mono-tag">Fit</button>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Chart & Results Output (7 cols) -->
+                        <!-- Regression Graph Display (7 cols) -->
                         <div class="lg:col-span-7 space-y-4">
-                            <!-- Chart Canvas Container -->
-                            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 h-64 relative">
+                            <div class="bg-obsidian p-4 rounded-lg border border-borderpanel h-64 relative">
                                 <canvas id="calibrationChart"></canvas>
                             </div>
 
-                            <!-- Calculated Result Display Box -->
-                            <div class="grid grid-cols-3 gap-2 text-center">
-                                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
-                                    <p class="text-[11px] text-slate-400">선형 회귀 방정식</p>
-                                    <p class="text-xs font-mono font-bold text-blue-400 mt-1" id="resEquation">y = 35.45x + 0.001</p>
+                            <!-- Output Metric Panel -->
+                            <div class="grid grid-cols-3 gap-2 text-center mono-tag">
+                                <div class="bg-slatepanel p-2.5 rounded border border-borderpanel">
+                                    <p class="text-[10px] text-slate-500">Regression Eq.</p>
+                                    <p class="text-xs font-bold text-sky-400 mt-1 truncate" id="resEquation">y = 35.45x + 0.001</p>
                                 </div>
-                                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
-                                    <p class="text-[11px] text-slate-400">결정계수 ($R^2$)</p>
-                                    <p class="text-xs font-mono font-bold text-emerald-400 mt-1" id="resR2">0.9992</p>
+                                <div class="bg-slatepanel p-2.5 rounded border border-borderpanel">
+                                    <p class="text-[10px] text-slate-500">R² Coefficient</p>
+                                    <p class="text-xs font-bold text-emeraldaccent mt-1" id="resR2">0.9992</p>
                                 </div>
-                                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
-                                    <p class="text-[11px] text-slate-400">미지 시료 농도</p>
-                                    <p class="text-xs font-mono font-bold text-amber-400 mt-1" id="resUnknownConc">0.00998 M</p>
+                                <div class="bg-slatepanel p-2.5 rounded border border-borderpanel">
+                                    <p class="text-[10px] text-slate-500">Unknown Conc.</p>
+                                    <p class="text-xs font-bold text-amberaccent mt-1" id="resUnknownConc">0.00998 M</p>
                                 </div>
                             </div>
                         </div>
@@ -575,49 +599,40 @@
                 </div>
             </section>
 
-            <!-- TAB 6: REPORT SUBMISSION -->
+            <!-- TAB 6: REPORT -->
             <section id="tab-report" class="tab-content hidden space-y-6">
-                <div class="glass-panel p-6 rounded-2xl border border-slate-800">
-                    <h2 class="text-xl font-bold text-white mb-2 flex items-center">
-                        <i class="fa-solid fa-file-export text-emerald-400 mr-2"></i> 실험 결과 보고서 제출
-                    </h2>
-                    <p class="text-xs text-slate-400 mb-6">작성한 데이터와 고찰을 작성하여 담당 조교 및 교수님께 제출합니다.</p>
+                <div class="editorial-panel p-6 rounded-xl space-y-5">
+                    <div class="border-b border-borderpanel pb-3">
+                        <h2 class="font-heading text-lg font-bold text-white">Lab Report Submission Module</h2>
+                        <p class="text-xs text-slate-400 mt-0.5">실험 결과와 학술적 고찰을 작성하여 제출합니다.</p>
+                    </div>
 
                     <form id="reportForm" onsubmit="submitReport(event)" class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mono-tag text-xs">
                             <div>
-                                <label class="block text-xs font-medium text-slate-300 mb-1">학번 / 이름</label>
-                                <input type="text" value="202412345 / 김연구" readonly class="w-full bg-slate-900/60 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-400 cursor-not-allowed">
+                                <label class="block text-slate-400 mb-1">Student Info</label>
+                                <input type="text" value="202412345 / 김연구" readonly class="w-full bg-obsidian border border-borderpanel rounded p-2.5 text-slate-500 cursor-not-allowed">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-slate-300 mb-1">실험 조 (Group)</label>
-                                <input type="text" value="3조 (화요일 분반)" readonly class="w-full bg-slate-900/60 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-400 cursor-not-allowed">
+                                <label class="block text-slate-400 mb-1">Lab Group</label>
+                                <input type="text" value="3조 (목요일 분반)" readonly class="w-full bg-obsidian border border-borderpanel rounded p-2.5 text-slate-500 cursor-not-allowed">
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">실험 결과 요약 (Result Summary)</label>
-                            <textarea rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-slate-200 focus:ring-1 focus:ring-blue-500 focus:outline-none" placeholder="측정한 미지 시료의 흡광도 및 회귀 방정식을 바탕으로 산출한 최종 농도를 기록하세요."></textarea>
+                            <label class="block text-xs font-medium text-slate-300 mb-1">Results Summary</label>
+                            <textarea rows="3" class="w-full bg-obsidian border border-borderpanel rounded-lg p-3 text-xs text-slate-200 focus:border-sky-500 focus:outline-none" placeholder="측정 흡광도와 산출된 회귀식을 기록하세요."></textarea>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">고찰 및 오차 분석 (Discussion)</label>
-                            <textarea rows="5" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-slate-200 focus:ring-1 focus:ring-blue-500 focus:outline-none" placeholder="Beer-Lambert 법칙에서의 편차 원인(예: 기기 오차, 큐벳 지문 오염, 고농도에서의 상호작용 등)에 대해 논하세요."></textarea>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">첨부 파일 (RAW 데이터 파일 또는 PDF)</label>
-                            <div class="border-2 border-dashed border-slate-700 rounded-xl p-6 text-center hover:border-blue-500/50 transition cursor-pointer">
-                                <i class="fa-solid fa-cloud-arrow-up text-2xl text-slate-400 mb-2"></i>
-                                <p class="text-xs text-slate-300">클릭하거나 파일을 여기로 드래그하세요</p>
-                                <p class="text-[10px] text-slate-500 mt-1">PDF, XLSX, DOCX (최대 20MB)</p>
-                            </div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1">Discussion & Error Analysis</label>
+                            <textarea rows="5" class="w-full bg-obsidian border border-borderpanel rounded-lg p-3 text-xs text-slate-200 focus:border-sky-500 focus:outline-none" placeholder="Beer-Lambert 법칙 오차 요인(기기 노이즈, 용매 흡수 한계 등)에 대해 논하세요."></textarea>
                         </div>
 
                         <div class="pt-2 flex justify-end">
-                            <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-2.5 rounded-xl text-xs shadow-lg shadow-emerald-600/30 transition flex items-center space-x-2">
+                            <button type="submit" class="mono-tag bg-emeraldaccent hover:bg-emerald-400 text-black font-bold px-6 py-2.5 rounded text-xs transition flex items-center space-x-2">
                                 <i class="fa-solid fa-paper-plane"></i>
-                                <span>최종 보고서 제출하기</span>
+                                <span>Submit Report</span>
                             </button>
                         </div>
                     </form>
@@ -627,41 +642,34 @@
         </main>
     </div>
 
-    <!-- Notification Toast Element -->
-    <div id="toast" class="fixed bottom-5 right-5 bg-blue-600 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50 text-xs">
-        <i class="fa-solid fa-circle-check text-base"></i>
-        <span id="toastMsg">메시지</span>
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-sky-500 text-black font-bold px-4 py-3 rounded shadow-2xl flex items-center space-x-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50 text-xs mono-tag">
+        <i class="fa-solid fa-check"></i>
+        <span id="toastMsg">System Notification</span>
     </div>
 
-    <!-- Page Scripts -->
+    <!-- Script Logic Integration -->
     <script>
-        // Tab Navigation Switcher
         function switchTab(tabId) {
-            // Hide all tab content
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            // Show selected tab
             const target = document.getElementById('tab-' + tabId);
             if (target) target.classList.remove('hidden');
 
-            // Update tab button styles
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 if (btn.dataset.tab === tabId) {
-                    btn.className = "nav-btn w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-medium transition-colors bg-blue-600/20 text-blue-400 border border-blue-500/30";
+                    btn.classList.add('active-tab');
                 } else {
-                    btn.className = "nav-btn w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/60 transition-colors";
+                    btn.classList.remove('active-tab');
                 }
             });
 
-            // Trigger window resize event to redraw chart/3d canvas if rendered hidden
             window.dispatchEvent(new Event('resize'));
         }
 
-        // SOP Progress Bar Update
         function updateProgress() {
             const checkboxes = document.querySelectorAll('.sop-checkbox');
             const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
-            const total = checkboxes.length;
-            const percentage = Math.round((checkedCount / total) * 100);
+            const percentage = Math.round((checkedCount / checkboxes.length) * 100);
 
             document.getElementById('progressPercent').innerText = percentage + '%';
             document.getElementById('progressBar').style.width = percentage + '%';
@@ -670,30 +678,24 @@
         function resetSOP() {
             document.querySelectorAll('.sop-checkbox').forEach(cb => cb.checked = false);
             updateProgress();
-            showNotification("SOP 체크리스트가 초기화되었습니다.");
+            showNotification("SOP checklist reset.");
         }
 
-        // Toast Notification System
         function showNotification(message) {
             const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toastMsg');
-            toastMsg.innerText = message;
+            document.getElementById('toastMsg').innerText = message;
             toast.classList.remove('translate-y-20', 'opacity-0');
-            
             setTimeout(() => {
                 toast.classList.add('translate-y-20', 'opacity-0');
             }, 3000);
         }
 
-        // Form Submission Handler
         function submitReport(e) {
             e.preventDefault();
-            showNotification("보고서가 정상적으로 제출되었습니다. (제출일시 기록 완료)");
+            showNotification("Lab report successfully submitted.");
         }
 
-        /* ===================================================
-           Three.js 3D Molecular Simulation (Copper Complex)
-        =================================================== */
+        /* 3D Scene Initialization */
         let scene, camera, renderer, moleculeGroup;
 
         function initThreeJS() {
@@ -705,47 +707,39 @@
 
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-            camera.position.z = 8;
+            camera.position.z = 7;
 
             renderer = new THREE.WebGLRenderer({ canvas: container, antialias: true, alpha: true });
             renderer.setSize(width, height);
             renderer.setPixelRatio(window.devicePixelRatio);
 
-            // Lighting
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
             scene.add(ambientLight);
 
-            const pointLight = new THREE.PointLight(0x60a5fa, 1.5);
+            const pointLight = new THREE.PointLight(0x38bdf8, 2);
             pointLight.position.set(10, 10, 10);
             scene.add(pointLight);
 
-            // Molecule Group (Copper center + Water ligands)
             moleculeGroup = new THREE.Group();
 
-            // Central Copper Ion (Cu2+) - Cyan Sphere
-            const cuGeo = new THREE.SphereGeometry(0.8, 32, 32);
-            const cuMat = new THREE.MeshStandardMaterial({ color: 0x00d2ff, roughness: 0.2, metalness: 0.5 });
-            const cuMesh = new THREE.Mesh(cuGeo, cuMat);
-            moleculeGroup.add(cuMesh);
+            // Central Cu2+ Ion
+            const cuGeo = new THREE.SphereGeometry(0.7, 32, 32);
+            const cuMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.2, metalness: 0.6 });
+            moleculeGroup.add(new THREE.Mesh(cuGeo, cuMat));
 
-            // 4 Surrounding Ligands (Oxygen/Water)
-            const ligPositions = [
-                [1.8, 0, 0], [-1.8, 0, 0], [0, 1.8, 0], [0, -1.8, 0]
-            ];
-
-            const ligGeo = new THREE.SphereGeometry(0.4, 24, 24);
-            const ligMat = new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.3 });
+            // Water Ligands
+            const ligPositions = [[1.6, 0, 0], [-1.6, 0, 0], [0, 1.6, 0], [0, -1.6, 0]];
+            const ligGeo = new THREE.SphereGeometry(0.35, 24, 24);
+            const ligMat = new THREE.MeshStandardMaterial({ color: 0xf43f5e, roughness: 0.3 });
 
             ligPositions.forEach(pos => {
                 const ligMesh = new THREE.Mesh(ligGeo, ligMat);
-                ligMesh.position.set(pos[0], pos[1], pos[2]);
+                ligMesh.position.set(...pos);
                 moleculeGroup.add(ligMesh);
 
-                // Coordination Bonds
-                const bondGeo = new THREE.CylinderGeometry(0.08, 0.08, 1.8, 16);
-                const bondMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, transparent: true, opacity: 0.6 });
+                const bondGeo = new THREE.CylinderGeometry(0.06, 0.06, 1.6, 16);
+                const bondMat = new THREE.MeshStandardMaterial({ color: 0x475569, transparent: true, opacity: 0.6 });
                 const bond = new THREE.Mesh(bondGeo, bondMat);
-                
                 bond.position.set(pos[0]/2, pos[1]/2, pos[2]/2);
                 if (pos[0] !== 0) bond.rotation.z = Math.PI / 2;
                 moleculeGroup.add(bond);
@@ -753,82 +747,64 @@
 
             scene.add(moleculeGroup);
 
-            // Drag Rotation Variables
             let isDragging = false;
             let previousMousePosition = { x: 0, y: 0 };
 
-            container.addEventListener('mousedown', (e) => {
-                isDragging = true;
-            });
-
+            container.addEventListener('mousedown', () => { isDragging = true; });
             container.addEventListener('mousemove', (e) => {
                 if (!isDragging) return;
-                const deltaMove = {
-                    x: e.offsetX - previousMousePosition.x,
-                    y: e.offsetY - previousMousePosition.y
-                };
-
-                moleculeGroup.rotation.y += deltaMove.x * 0.01;
-                moleculeGroup.rotation.x += deltaMove.y * 0.01;
-
+                const deltaX = e.offsetX - previousMousePosition.x;
+                const deltaY = e.offsetY - previousMousePosition.y;
+                moleculeGroup.rotation.y += deltaX * 0.01;
+                moleculeGroup.rotation.x += deltaY * 0.01;
                 previousMousePosition = { x: e.offsetX, y: e.offsetY };
             });
-
             window.addEventListener('mouseup', () => { isDragging = false; });
             container.addEventListener('mouseleave', () => { isDragging = false; });
             container.addEventListener('mousemove', (e) => {
-                if (!isDragging) {
-                    previousMousePosition = { x: e.offsetX, y: e.offsetY };
-                }
+                if (!isDragging) previousMousePosition = { x: e.offsetX, y: e.offsetY };
             });
 
-            // Animation Loop
             function animate() {
                 requestAnimationFrame(animate);
-                if (!isDragging) {
-                    moleculeGroup.rotation.y += 0.005;
-                }
+                if (!isDragging) moleculeGroup.rotation.y += 0.004;
                 renderer.render(scene, camera);
             }
             animate();
         }
 
-        /* ===================================================
-           Chart.js Calibration Curve & Linear Regression
-        =================================================== */
+        /* Chart Regression Calculation */
         let chartInstance = null;
 
         function initChart() {
             const ctx = document.getElementById('calibrationChart').getContext('2d');
-            
             chartInstance = new Chart(ctx, {
                 type: 'scatter',
                 data: {
                     datasets: [
                         {
-                            label: '표준 용액 데이터',
+                            label: 'Standards',
                             data: [],
-                            backgroundColor: '#3b82f6',
-                            borderColor: '#60a5fa',
-                            pointRadius: 6,
-                            pointHoverRadius: 8
+                            backgroundColor: '#38bdf8',
+                            borderColor: '#38bdf8',
+                            pointRadius: 5
                         },
                         {
-                            label: '선형 회귀선 (Beer-Lambert)',
+                            label: 'Beer-Lambert Fit',
                             data: [],
                             type: 'line',
-                            borderColor: '#10b981',
-                            borderWidth: 2,
+                            borderColor: '#34d399',
+                            borderWidth: 1.5,
                             pointRadius: 0,
                             fill: false
                         },
                         {
-                            label: '미지 시료 (Unknown X)',
+                            label: 'Unknown X',
                             data: [],
-                            backgroundColor: '#f59e0b',
+                            backgroundColor: '#fbbf24',
                             borderColor: '#fbbf24',
                             pointStyle: 'rectRot',
-                            pointRadius: 9
+                            pointRadius: 8
                         }
                     ]
                 },
@@ -837,20 +813,18 @@
                     maintainAspectRatio: false,
                     scales: {
                         x: {
-                            type: 'linear',
-                            position: 'bottom',
-                            title: { display: true, text: '농도 Concentration (M)', color: '#94a3b8' },
-                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            ticks: { color: '#94a3b8' }
+                            title: { display: true, text: 'Concentration (M)', color: '#64748b', font: { family: 'JetBrains Mono', size: 10 } },
+                            grid: { color: '#1e2433' },
+                            ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 10 } }
                         },
                         y: {
-                            title: { display: true, text: '흡광도 Absorbance (A)', color: '#94a3b8' },
-                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            ticks: { color: '#94a3b8' }
+                            title: { display: true, text: 'Absorbance (A)', color: '#64748b', font: { family: 'JetBrains Mono', size: 10 } },
+                            grid: { color: '#1e2433' },
+                            ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 10 } }
                         }
                     },
                     plugins: {
-                        legend: { labels: { color: '#f8fafc', font: { size: 11 } } }
+                        legend: { labels: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 10 } } }
                     }
                 }
             });
@@ -862,9 +836,7 @@
             const concInputs = document.querySelectorAll('.conc-input');
             const absInputs = document.querySelectorAll('.abs-input');
             
-            let xVals = [];
-            let yVals = [];
-            let points = [];
+            let xVals = [], yVals = [], points = [];
 
             for (let i = 0; i < concInputs.length; i++) {
                 let x = parseFloat(concInputs[i].value);
@@ -879,7 +851,6 @@
             const n = xVals.length;
             if (n === 0) return;
 
-            // Calculate Linear Regression (y = mx + c)
             let sumX = xVals.reduce((a, b) => a + b, 0);
             let sumY = yVals.reduce((a, b) => a + b, 0);
             let sumXY = xVals.reduce((sum, x, i) => sum + x * yVals[i], 0);
@@ -888,58 +859,42 @@
             let slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
             let intercept = (sumY - slope * sumX) / n;
 
-            // R-Squared Calculation
             let yMean = sumY / n;
             let ssTot = yVals.reduce((sum, y) => sum + Math.pow(y - yMean, 2), 0);
             let ssRes = yVals.reduce((sum, y, i) => sum + Math.pow(y - (slope * xVals[i] + intercept), 2), 0);
             let r2 = 1 - (ssRes / ssTot);
 
-            // Unknown Concentration Calculation
             let unknownAbs = parseFloat(document.getElementById('unknownAbsInput').value) || 0;
             let unknownConc = (unknownAbs - intercept) / slope;
 
-            // Update Display DOM
             document.getElementById('resEquation').innerText = `y = ${slope.toFixed(2)}x ${intercept >= 0 ? '+' : ''} ${intercept.toFixed(3)}`;
             document.getElementById('resR2').innerText = r2.toFixed(4);
             document.getElementById('resUnknownConc').innerText = `${unknownConc.toFixed(5)} M`;
 
-            // Update Chart Datasets
             if (chartInstance) {
                 chartInstance.data.datasets[0].data = points;
-                
-                // Line Data Points (Min X to Max X)
-                let minX = Math.min(...xVals);
                 let maxX = Math.max(...xVals);
                 chartInstance.data.datasets[1].data = [
                     { x: 0, y: intercept },
                     { x: maxX * 1.1, y: slope * (maxX * 1.1) + intercept }
                 ];
-
-                // Unknown Point
-                chartInstance.data.datasets[2].data = [
-                    { x: unknownConc, y: unknownAbs }
-                ];
-
+                chartInstance.data.datasets[2].data = [{ x: unknownConc, y: unknownAbs }];
                 chartInstance.update();
             }
         }
 
-        // Initialize on Window Load
         window.onload = function () {
             initThreeJS();
             initChart();
         };
 
-        // Resize Listener for Responsive Canvas
         window.addEventListener('resize', function() {
             if (renderer && camera) {
                 const container = document.getElementById('threeCanvas');
                 if (container) {
-                    const width = container.clientWidth;
-                    const height = container.clientHeight;
-                    camera.aspect = width / height;
+                    camera.aspect = container.clientWidth / container.clientHeight;
                     camera.updateProjectionMatrix();
-                    renderer.setSize(width, height);
+                    renderer.setSize(container.clientWidth, container.clientHeight);
                 }
             }
         });
